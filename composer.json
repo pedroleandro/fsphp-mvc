@@ -1,0 +1,34 @@
+{
+  "name": "pedroleandro/fsphp-mvc",
+  "description": "Projeto MVC da Formação FullStack PHP Developer",
+  "minimun-stability": "stable",
+  "authors": [
+    {
+      "name": "Pedro Leandro Gomes da Silva",
+      "email": "pedroleandrogomesdasilva@outlook.com",
+      "homepage": "https://github.com/pedroleandro",
+      "role": "Professor e Desenvolvedor"
+    }
+  ],
+  "config": {
+    "vendor-dir": "vendor"
+  },
+  "autoload": {
+    "psr-4": {
+      "Source\\": "source/"
+    },
+    "files": [
+      "source/Support/Config.php",
+      "source/Support/Helpers.php"
+    ]
+  },
+  "require": {
+    "league/csv": "9.28.0",
+    "phpmailer/phpmailer": "^7.0.0",
+    "vlucas/phpdotenv": "^5.6",
+    "league/plates": "3.*",
+    "coffeecode/uploader": "2.0.*",
+    "coffeecode/cropper": "2.0.*",
+    "coffeecode/paginator": "2.0.*"
+  }
+}
