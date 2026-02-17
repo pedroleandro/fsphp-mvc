@@ -29,6 +29,7 @@
     "league/plates": "3.*",
     "coffeecode/uploader": "2.0.*",
     "coffeecode/cropper": "2.0.*",
-    "coffeecode/paginator": "2.0.*"
+    "coffeecode/paginator": "2.0.*",
+    "coffeecode/router": "2.0.*"
   }
 }

@@ -17,7 +17,8 @@ define("CONFIG_DB_PORT", $_ENV['db_port']);
 /**
  * URLS
  */
-define("CONFIG_URL_BASE", "http://localhost/upinside/fsphp-mvc");
+define("CONFIG_URL_BASE", "https://www.fsphpmvc.com.br");
+define("CONFIG_URL_TEST", "http://localhost/upinside/fsphp-mvc");
 define("CONFIG_URL_ADMIN", CONFIG_URL_BASE . "/admin");
 define("CONFIG_URL_ERROR", CONFIG_URL_BASE . "/404");
 
@@ -72,6 +73,7 @@ define("CONFIG_IMAGE_QUALITY", ['jpg' => 75, 'png' => 5]);
  */
 define("CONFIG_VIEW_PATH", __DIR__ . "/../assets/views");
 define("CONFIG_VIEW_EXTENSION", __DIR__ . "php");
+define("CONFIG_VIEW_THEME", "cafecontrol");
 
 
 /**

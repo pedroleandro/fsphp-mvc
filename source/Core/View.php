@@ -8,7 +8,7 @@ class View
 {
     private Engine $engine;
 
-    public function __construct(string $path, string $extension)
+    public function __construct(string $path, string $extension = "php")
     {
         $this->engine = new Engine($path, $extension);
     }

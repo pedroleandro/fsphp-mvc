@@ -128,9 +128,21 @@ function str_limit_chars(string $string, int $limit, string $pointer = "..."): s
  * ######################
  */
 
-function url(string $path): string
+function url(?string $path = null): string
 {
-    return CONFIG_URL_BASE . "/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
+    if(strpos($_SERVER['HTTP_HOST'], 'localhost')){
+        if($path){
+            return CONFIG_URL_TEST . "/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
+        }
+
+        return CONFIG_URL_TEST;
+    }
+
+    if($path){
+        return CONFIG_URL_BASE . "/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
+    }
+
+    return CONFIG_URL_BASE;
 }
 
 function redirect(string $url): void
