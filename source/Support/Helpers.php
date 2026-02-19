@@ -158,6 +158,23 @@ function redirect(string $url): void
     exit;
 }
 
+function theme(?string $path = null)
+{
+    if(strpos($_SERVER['HTTP_HOST'], 'localhost')){
+        if($path){
+            return CONFIG_URL_TEST . "/themes/" . CONFIG_VIEW_THEME . "/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
+        }
+
+        return CONFIG_URL_TEST . "/themes/" . CONFIG_VIEW_THEME;
+    }
+
+    if($path){
+        return CONFIG_URL_BASE . "/themes/" . CONFIG_VIEW_THEME . "/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
+    }
+
+    return CONFIG_URL_BASE . "/themes/" . CONFIG_VIEW_THEME;
+}
+
 
 /**
  * #################
