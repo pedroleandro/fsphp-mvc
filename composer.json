@@ -19,7 +19,8 @@
     },
     "files": [
       "source/Support/Config.php",
-      "source/Support/Helpers.php"
+      "source/Support/Helpers.php",
+      "source/Support/Minify.php"
     ]
   },
   "require": {
@@ -30,6 +31,8 @@
     "coffeecode/uploader": "2.0.*",
     "coffeecode/cropper": "2.0.*",
     "coffeecode/paginator": "2.0.*",
-    "coffeecode/router": "2.0.*"
+    "coffeecode/router": "2.0.*",
+    "ext-pdo": "*",
+    "matthiasmullie/minify": "^1.3"
   }
 }
