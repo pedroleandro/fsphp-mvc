@@ -14,14 +14,14 @@ class Web extends Controller
     public function home(): void
     {
         echo $this->view->render("home", [
-            "title" => "CafeControl - Gerencie suas contas com o melhor café",
+            "title" => "Home | CafeControl",
         ]);
     }
 
     public function error(array $data): void
     {
         echo $this->view->render("error", [
-            "title" => "CafeControl - Erro {$data['errorCode']} | Whooops!",
+            "title" => "Erro {$data['errorCode']} | CafeControl!",
         ]);
     }
 }
