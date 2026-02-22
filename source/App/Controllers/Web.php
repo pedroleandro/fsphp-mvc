@@ -18,10 +18,31 @@ class Web extends Controller
         ]);
     }
 
+    public function about(): void
+    {
+        echo $this->view->render("about", [
+            "title" => "Sobre | CafeControl",
+        ]);
+    }
+
+    public function terms(): void
+    {
+        echo $this->view->render("terms", [
+            "title" => "Termos de Uso | CafeControl",
+        ]);
+    }
+
     public function error(array $data): void
     {
         echo $this->view->render("error", [
             "title" => "Erro {$data['errorCode']} | CafeControl!",
+            "error" => (object)[
+                "code" => $data['errorCode'],
+                "title" => "Ooops. Essa página não existe",
+                "message" => "Sentimos muito, mas o conteúdo que você tentou acessar não existe, está indisponível ou foi removido",
+                "linkTitle" => "Continue navegando",
+                "link" => url()
+            ]
         ]);
     }
 }

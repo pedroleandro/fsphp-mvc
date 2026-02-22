@@ -13,6 +13,7 @@ $router = new Router(url(), "@");
 $router->namespace('Source\App\Controllers');
 $router->get('/', 'Web@home');
 $router->get('/sobre', 'Web@about');
+$router->get('/termos', 'Web@terms');
 
 $router->namespace('Source\App\Controllers')->group('/error');
 $router->get('/{errorCode}', 'Web@error');
