@@ -12,6 +12,16 @@ abstract class Model
     protected ?\PDOException $fail = null;
     protected Message $message;
 
+    protected string $query;
+
+    protected array $params;
+
+    protected string $order;
+
+    protected int $limit;
+
+    protected int $offset;
+
     public function __construct()
     {
         $this->message = new Message();
@@ -32,14 +42,70 @@ abstract class Model
         return $this->message;
     }
 
-    protected function create(string $entity, array $data)
+    public function find(?string $terms = null, ?string $params = null, string $columns = "*"): null|Model
+    {
+        if ($terms) {
+            $this->query = "SELECT {$columns} FROM " . static::$entity . " WHERE {$terms}";
+            parse_str($params, $this->params);
+            return $this;
+        }
+
+        $this->query = "SELECT {$columns} FROM " . static::$entity;
+        return $this;
+    }
+
+    public function order(string $columnOrder): Model
+    {
+        $this->order = " ORDER BY {$columnOrder}";
+    }
+
+    public function limit(int $limit): Model
+    {
+        $this->limit = " LIMIT {$limit}";
+    }
+
+    public function offset(int $offset): Model
+    {
+        $this->offset = " OFFSET {$offset}";
+    }
+
+    public function fetch(bool $all = false)
+    {
+        try {
+            $statement = Connect::getInstance()->prepare($this->query . $this->order . $this->limit . $this->offset);
+            $statement->execute($this->params);
+
+            if (!$statement->rowCount()) {
+                return null;
+            }
+
+            if ($all) {
+                return $statement->fetchAll(\PDO::FETCH_CLASS, static::class);
+            }
+
+            return $statement->fetchObject(static::class);
+        } catch (\PDOException $exception) {
+            $this->fail = $exception;
+            return null;
+        }
+    }
+
+    public function count(string $key = "id"): int
+    {
+        $statement = Connect::getInstance()->prepare($this->query);
+        $statement->execute($this->params);
+
+        return $statement->rowCount();
+    }
+
+    protected function create(array $data)
     {
         try {
             $columns = implode(", ", array_keys($data));
-            $values  = ":" . implode(", :", array_keys($data));
+            $values = ":" . implode(", :", array_keys($data));
 
             $statement = Connect::getInstance()->prepare(
-                "INSERT INTO {$entity} ({$columns}) VALUES ({$values})"
+                "INSERT INTO " . static::$entity . " ({$columns}) VALUES ({$values})"
             );
 
             foreach ($data as $key => $value) {
@@ -63,9 +129,9 @@ abstract class Model
             if ($params) {
                 parse_str($params, $params);
                 foreach ($params as $key => $value) {
-                    if($key == "limit" || $key == "offset") {
+                    if ($key == "limit" || $key == "offset") {
                         $statement->bindValue(":$key", $value, \PDO::PARAM_INT);
-                    }else{
+                    } else {
                         $statement->bindValue(":$key", $value, \PDO::PARAM_STR);
                     }
                 }
@@ -79,7 +145,7 @@ abstract class Model
         }
     }
 
-    protected function update(string $entity, array $data, string $terms, string $params): bool
+    protected function update(array $data, string $terms, string $params): bool
     {
         try {
             $set = [];
@@ -91,13 +157,13 @@ abstract class Model
             $set = implode(", ", $set);
 
             $statement = Connect::getInstance()->prepare(
-                "UPDATE {$entity} SET {$set} WHERE {$terms}"
+                "UPDATE " . static::$entity . " SET {$set} WHERE {$terms}"
             );
 
             foreach ($data as $key => $value) {
-                if($key == "limit" || $key == "offset") {
+                if ($key == "limit" || $key == "offset") {
                     $statement->bindValue(":$key", $value, \PDO::PARAM_INT);
-                }else{
+                } else {
                     $statement->bindValue(":$key", $value, \PDO::PARAM_STR);
                 }
             }
@@ -116,26 +182,20 @@ abstract class Model
         }
     }
 
-    protected function delete(string $entity, string $terms, string $params): bool
+    protected function delete(string $key, string $value): bool
     {
         try {
             $statement = Connect::getInstance()->prepare(
-                "DELETE FROM {$entity} WHERE {$terms}"
+                "DELETE FROM " . static::$entity . " WHERE {$key} = :key"
             );
 
-            parse_str($params, $params);
+            $statement->bindValue(":key", $value, \PDO::PARAM_STR);
 
-            foreach ($params as $key => $value) {
-                if($key == "limit" || $key == "offset") {
-                    $statement->bindValue(":$key", $value, \PDO::PARAM_INT);
-                }else{
-                    $statement->bindValue(":$key", $value, \PDO::PARAM_STR);
-                }
-            }
+            $statement->execute();
 
-            return $statement->execute();
-        } catch (\PDOException $e) {
-            $this->fail = $e;
+            return true;
+        } catch (\PDOException $exception) {
+            $this->fail = $exception;
             return false;
         }
     }
@@ -144,7 +204,7 @@ abstract class Model
     {
         $safe = (array)$this->data;
 
-        foreach (static::$safe as $unset){
+        foreach (static::$safe as $unset) {
             unset($safe[$unset]);
         }
         return $safe;
@@ -154,7 +214,7 @@ abstract class Model
     {
         $filter = [];
         foreach ($data as $key => $value) {
-            $filter[$key] = (is_null($value) ? null : filter_var($value, FILTER_UNSAFE_RAW));
+            $filter[$key] = (is_null($value) ? null : filter_var($value, FILTER_DEFAULT));
         }
 
         return $filter;
@@ -164,8 +224,8 @@ abstract class Model
     {
         $data = (array)$this->data();
 
-        foreach (static::$required as $field){
-            if(empty($data[$field])){
+        foreach (static::$required as $field) {
+            if (empty($data[$field])) {
                 return false;
             }
         }

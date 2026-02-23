@@ -73,7 +73,7 @@ define("CONFIG_IMAGE_QUALITY", ['jpg' => 75, 'png' => 5]);
  */
 define("CONFIG_VIEW_PATH", __DIR__ . "/../assets/views");
 define("CONFIG_VIEW_EXTENSION", __DIR__ . "php");
-define("CONFIG_VIEW_THEME", "cafecontrol");
+define("CONFIG_VIEW_THEME", "cafeweb");
 
 
 /**
