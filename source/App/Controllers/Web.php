@@ -3,6 +3,7 @@
 namespace Source\App\Controllers;
 
 use Source\Core\Controller;
+use Source\Support\Pager;
 
 class Web extends Controller
 {
@@ -29,6 +30,26 @@ class Web extends Controller
     {
         echo $this->view->render("terms", [
             "title" => "Termos de Uso | CafeControl",
+        ]);
+    }
+
+    public function blog(?array $data): void
+    {
+        $pager = new Pager(url('/blog/page/'));
+        $pager->pager(100, 10, ($data['page'] ?? 1));
+
+        echo $this->view->render("blog", [
+            "title" => "Blog | CafeControl",
+            "paginator" => $pager->render()
+        ]);
+    }
+
+    public function blogPost(array $data): void
+    {
+        $postName = $data["postName"];
+
+        echo $this->view->render("blog-post", [
+            "title" => "{$postName} | CafeControl"
         ]);
     }
 

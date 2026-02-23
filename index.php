@@ -15,6 +15,10 @@ $router->get('/', 'Web@home');
 $router->get('/sobre', 'Web@about');
 $router->get('/termos', 'Web@terms');
 
+$router->get('/blog', 'Web@blog');
+$router->get('/blog/page/{page}', 'Web@blog');
+$router->get('/blog/{postName}', 'Web@blogPost');
+
 $router->namespace('Source\App\Controllers')->group('/error');
 $router->get('/{errorCode}', 'Web@error');
 

@@ -1,4 +1,6 @@
-<?php $this->layout("_theme"); ?>
+<?php $this->layout("_theme", [
+        "title" => $title
+]); ?>
 
 <section class="blog_page">
     <header class="blog_page_header">
