@@ -23,6 +23,9 @@ $router->get('/entrar', 'Web@login');
 $router->get('/recuperar', 'Web@forget');
 $router->get('/cadastrar', 'Web@register');
 
+$router->get('/confirma', 'Web@confirm');
+$router->get('/obrigado', 'Web@success');
+
 $router->namespace('Source\App\Controllers')->group('/error');
 $router->get('/{errorCode}', 'Web@error');
 

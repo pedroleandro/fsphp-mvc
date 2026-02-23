@@ -74,6 +74,20 @@ class Web extends Controller
         ]);
     }
 
+    public function confirm()
+    {
+        echo $this->view->render("optin-confirm", [
+            "title" => "Confirma | CafeControl"
+        ]);
+    }
+
+    public function success()
+    {
+        echo $this->view->render("optin-success", [
+            "title" => "Obrigado | CafeControl"
+        ]);
+    }
+
     public function error(array $data): void
     {
         echo $this->view->render("error", [

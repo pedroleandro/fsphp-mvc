@@ -1,4 +1,6 @@
-<?php $this->layout("_theme"); ?>
+<?php $this->layout("_theme", [
+        "title" => $title
+]); ?>
 
 <article class="optin_page">
     <div class="container content">
