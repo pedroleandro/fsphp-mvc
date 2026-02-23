@@ -53,6 +53,27 @@ class Web extends Controller
         ]);
     }
 
+    public function login()
+    {
+        echo $this->view->render("auth-login", [
+            "title" => "Entrar | CafeControl"
+        ]);
+    }
+
+    public function forget()
+    {
+        echo $this->view->render("auth-forget", [
+            "title" => "Recuperar | CafeControl"
+        ]);
+    }
+
+    public function register()
+    {
+        echo $this->view->render("auth-register", [
+            "title" => "Cadastrar | CafeControl"
+        ]);
+    }
+
     public function error(array $data): void
     {
         echo $this->view->render("error", [

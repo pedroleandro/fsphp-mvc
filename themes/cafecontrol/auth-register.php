@@ -1,4 +1,6 @@
-<?php $this->layout("_theme"); ?>
+<?php $this->layout("_theme", [
+        "title" => $title
+]); ?>
 
 <article class="auth">
     <div class="auth_content container content">

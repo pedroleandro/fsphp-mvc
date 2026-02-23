@@ -19,6 +19,10 @@ $router->get('/blog', 'Web@blog');
 $router->get('/blog/page/{page}', 'Web@blog');
 $router->get('/blog/{postName}', 'Web@blogPost');
 
+$router->get('/entrar', 'Web@login');
+$router->get('/recuperar', 'Web@forget');
+$router->get('/cadastrar', 'Web@register');
+
 $router->namespace('Source\App\Controllers')->group('/error');
 $router->get('/{errorCode}', 'Web@error');
 
