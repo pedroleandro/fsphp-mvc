@@ -12,15 +12,15 @@ abstract class Model
     protected ?\PDOException $fail = null;
     protected Message $message;
 
-    protected string $query;
+    protected string $query = "";
 
-    protected array $params;
+    protected array $params = [];
 
-    protected string $order;
+    protected string $order = "";
 
-    protected int $limit;
+    protected ?int $limit = null;
 
-    protected int $offset;
+    protected ?int $offset = null;
 
     public function __construct()
     {
@@ -57,22 +57,40 @@ abstract class Model
     public function order(string $columnOrder): Model
     {
         $this->order = " ORDER BY {$columnOrder}";
+        return $this;
     }
 
     public function limit(int $limit): Model
     {
-        $this->limit = " LIMIT {$limit}";
+        $this->limit = $limit;
+        return $this;
     }
 
     public function offset(int $offset): Model
     {
-        $this->offset = " OFFSET {$offset}";
+        $this->offset = $offset;
+        return $this;
     }
 
     public function fetch(bool $all = false)
     {
         try {
-            $statement = Connect::getInstance()->prepare($this->query . $this->order . $this->limit . $this->offset);
+
+            $sql = $this->query;
+
+            if ($this->order) {
+                $sql .= $this->order;
+            }
+
+            if (!is_null($this->limit)) {
+                $sql .= " LIMIT " . $this->limit;
+            }
+
+            if (!is_null($this->offset)) {
+                $sql .= " OFFSET " . $this->offset;
+            }
+
+            $statement = Connect::getInstance()->prepare($sql);
             $statement->execute($this->params);
 
             if (!$statement->rowCount()) {
@@ -80,10 +98,12 @@ abstract class Model
             }
 
             if ($all) {
-                return $statement->fetchAll(\PDO::FETCH_CLASS, static::class);
+                $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+                return array_map(fn($row) => $this->hydrate($row), $rows);
             }
 
-            return $statement->fetchObject(static::class);
+            return $this->hydrate($statement->fetch(PDO::FETCH_ASSOC));
+
         } catch (\PDOException $exception) {
             $this->fail = $exception;
             return null;
@@ -182,18 +202,18 @@ abstract class Model
         }
     }
 
-    protected function delete(string $key, string $value): bool
+    public function delete(string $key, string $value): bool
     {
         try {
             $statement = Connect::getInstance()->prepare(
                 "DELETE FROM " . static::$entity . " WHERE {$key} = :key"
             );
 
-            $statement->bindValue(":key", $value, \PDO::PARAM_STR);
-
+            $statement->bindValue(":key", $value);
             $statement->execute();
 
-            return true;
+            return $statement->rowCount() > 0;
+
         } catch (\PDOException $exception) {
             $this->fail = $exception;
             return false;
@@ -238,11 +258,13 @@ abstract class Model
         $model = new static();
 
         foreach ($data as $column => $value) {
+
             $method = 'set' . str_replace('_', '', ucwords($column, '_'));
 
             if (method_exists($model, $method)) {
-                $model->$method($value);
+                $model->{$method}($value);
             }
+
         }
 
         return $model;

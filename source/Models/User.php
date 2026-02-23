@@ -8,17 +8,22 @@ use Source\Core\Model;
 
 class User extends Model
 {
-    private int $id;
-    private string $firstName;
-    private string $lastName;
-    private string $email;
-    private string $password;
-    private ?int $document;
-    private string|DateTime|null $createdAt;
-    private string|DateTime|null $updatedAt;
+    private ?int $id = null;
+    private ?string $firstName = null;
+    private ?string $lastName = null;
+    private ?string $email = null;
+    private ?string $password = null;
+    private ?int $document = null;
+    private string|DateTime|null $createdAt = null;
+    private string|DateTime|null $updatedAt = null;
     protected static array $safe = ["id", "created_at", "updated_at"];
     protected static string $entity = "users";
     protected static array $required = ["firstName", "lastName", "email", "password"];
+
+    public function __construct()
+    {
+        parent::__construct("users", ["id"], ["first_name", "last_name", "email", "password"]);
+    }
 
     public function bootstrap(string $firstName, string $lastName, string $email, ?string $password, ?int $document = null): ?User
     {
@@ -43,86 +48,37 @@ class User extends Model
         ];
     }
 
-    public function find(
-        string $terms,
-        string $params,
-        string $columns = '*'
-    ): ?User
-    {
-        $query = "SELECT {$columns}
-              FROM " . self::$entity . "
-              WHERE {$terms}
-              LIMIT 1";
-
-        $stmt = $this->read($query, $params);
-
-        if (!$stmt) {
-            $this->message->warning("Erro ao consultar o usuário");
-            return null;
-        }
-
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$data) {
-            $this->message->warning("Usuário não encontrado");
-            return null;
-        }
-
-        return $this->hydrate($data);
-    }
-
     public function findById(int $id, string $columns = '*'): ?User
     {
-        return $this->find(
+        $find = $this->find(
             'id = :id',
             "id={$id}",
             $columns
         );
+
+        return $find->fetch();
     }
 
     public function findByEmail(string $email, string $columns = '*'): ?User
     {
-        return $this->find(
+        $find = $this->find(
             'email = :email',
             "email={$email}",
             $columns
         );
+
+        return $find->fetch();
     }
 
-    public function findAll(int $limit = 30, int $offset = 0, string $columns = '*'): ?array
-    {
-        $query = "SELECT {$columns} FROM " . self::$entity . " LIMIT :limit OFFSET :offset";
-
-        $stmt = $this->read($query, "limit={$limit}&offset={$offset}");
-
-        if (!$stmt) {
-            return null;
-        }
-
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (!$rows) {
-            return null;
-        }
-
-        $users = [];
-
-        foreach ($rows as $row) {
-            $users[] = $this->hydrate($row);
-        }
-
-        return $users;
-    }
-
-    public function save()
+    public function save(): bool
     {
         if (!$this->required()) {
-            return null;
+            return false;
         }
 
         if(!is_email($this->email)){
             $this->message->warning("O e-mail informado não é válido!");
-            return null;
+            return false;
         }
 
         /**
@@ -132,7 +88,7 @@ class User extends Model
 
             if (empty($this->password)) {
                 $this->message->warning("A senha é obrigatória.");
-                return null;
+                return false;
             }
 
             if (!is_password($this->password)) {
@@ -142,12 +98,12 @@ class User extends Model
                 $this->message->warning(
                     "A senha deve ter entre {$min} e {$max} caracteres!"
                 );
-                return null;
+                return false;
             }
 
-            if ($this->findByEmail($this->email)) {
+            if ($this->findByEmail($this->email, "id")) {
                 $this->message->warning("O e-mail informado já está cadastrado!");
-                return null;
+                return false;
             }
 
             $this->password = password_hash($this->password, PASSWORD_DEFAULT);
@@ -160,11 +116,11 @@ class User extends Model
                 "document"   => $this->document ?? null
             ];
 
-            $userId = $this->create(self::$entity, (array)$this->data);
+            $userId = $this->create((array)$this->data);
 
             if (!$userId) {
                 $this->message->error("Erro ao cadastrar, verifique os dados!");
-                return null;
+                return false;
             }
 
             $this->message->success("Cadastro realizado com sucesso!");
@@ -183,7 +139,7 @@ class User extends Model
 
             if ($email && $email->rowCount()) {
                 $this->message->warning("O e-mail informado já está cadastrado!");
-                return null;
+                return false;
             }
 
             $this->data = (object)[
@@ -196,17 +152,17 @@ class User extends Model
             if (!empty($this->password)) {
                 if (!is_password($this->password)) {
                     $this->message->warning("Senha inválida.");
-                    return null;
+                    return false;
                 }
 
                 $this->data->password = password_hash($this->password, PASSWORD_DEFAULT);
             }
 
-            $this->update(self::$entity, $this->safe(), "id = :id", "id={$userId}");
+            $this->update($this->safe(), "id = :id", "id={$userId}");
 
             if (!$userId) {
                 $this->message->error("Erro ao atualizar, verifique os dados!");
-                return null;
+                return false;
             }
 
             $this->message->success("Cadastro atualizado com sucesso!");
@@ -217,33 +173,8 @@ class User extends Model
             "id={$userId}"
         )->fetch(PDO::FETCH_OBJ);
 
-        return $this;
-
-    }
-
-    public function destroy(): bool
-    {
-        if (empty($this->id)) {
-            $this->message->warning("Usuário não identificado para exclusão.");
-            return false;
-        }
-
-        $delete = $this->delete(
-            self::$entity,
-            "id = :id",
-            "id={$this->id}"
-        );
-
-        if (!$delete) {
-            $this->message->error("Erro ao remover o usuário.");
-            return false;
-        }
-
-        $this->message->success("Usuário removido com sucesso!");
-        $this->data = null;
-        $this->id = 0;
-
         return true;
+
     }
 
     public function getId(): int
@@ -293,9 +224,7 @@ class User extends Model
 
     public function setPassword(?string $password): void
     {
-        if ($password) {
-            $this->password = password_hash($password, PASSWORD_DEFAULT);
-        }
+        $this->password = $password;
     }
 
     public function getDocument(): ?int
