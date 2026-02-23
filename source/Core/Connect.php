@@ -16,7 +16,7 @@ class Connect
 
     private static $instance;
 
-    public static function getInstance(): PDO
+    public static function getInstance(): ?PDO
     {
         if (empty(self::$instance)) {
             try {
@@ -27,7 +27,8 @@ class Connect
                     self::OPTIONS
                 );
             } catch (PDOException $PDOException) {
-                die("<h1>Erro ao conectar!</h1>");
+                redirect("/error/problemas");
+//                die("<h1>Erro ao conectar!</h1>");
             }
         }
         return self::$instance;

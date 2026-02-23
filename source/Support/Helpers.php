@@ -153,9 +153,11 @@ function redirect(string $url): void
         exit;
     }
 
-    $location = url($url);
-    header("Location: {$location}");
-    exit;
+    if(filter_input(INPUT_GET, "route", FILTER_DEFAULT) != $url){
+        $location = url($url);
+        header("Location: {$location}");
+        exit;
+    }
 }
 
 function theme(?string $path = null)
