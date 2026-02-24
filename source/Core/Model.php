@@ -4,7 +4,6 @@ namespace Source\Core;
 
 use PDO;
 use PDOStatement;
-use Source\Core\Message;
 
 abstract class Model
 {
@@ -22,8 +21,17 @@ abstract class Model
 
     protected ?int $offset = null;
 
-    public function __construct()
+    protected static string $entity;
+
+    protected static array $protected;
+
+    protected static array $required;
+
+    public function __construct(string $entity, array $protected, array $required)
     {
+        self::$entity = $entity;
+        self::$protected = array_merge($protected, ['created_at', "updated_at"]);
+        self::$required = $required;
         $this->message = new Message();
     }
 
@@ -52,6 +60,17 @@ abstract class Model
 
         $this->query = "SELECT {$columns} FROM " . static::$entity;
         return $this;
+    }
+
+    public function findById(int $id, string $columns = '*'): ?Model
+    {
+        $find = $this->find(
+            'id = :id',
+            "id={$id}",
+            $columns
+        );
+
+        return $find->fetch();
     }
 
     public function order(string $columnOrder): Model

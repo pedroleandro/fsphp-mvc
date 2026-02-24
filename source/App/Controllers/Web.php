@@ -4,6 +4,8 @@ namespace Source\App\Controllers;
 
 use Source\Core\Connect;
 use Source\Core\Controller;
+use Source\Models\Faq\Channel;
+use Source\Models\Faq\Question;
 use Source\Models\User;
 use Source\Support\Pager;
 use stdClass;
@@ -28,8 +30,12 @@ class Web extends Controller
 
     public function about(): void
     {
+        $channel = (new Channel())->findById(1);
+        $questions = $channel->questions();
+
         echo $this->view->render("about", [
             "title" => "Sobre | CafeControl",
+            "questions" => $questions,
         ]);
     }
 

@@ -48,17 +48,6 @@ class User extends Model
         ];
     }
 
-    public function findById(int $id, string $columns = '*'): ?User
-    {
-        $find = $this->find(
-            'id = :id',
-            "id={$id}",
-            $columns
-        );
-
-        return $find->fetch();
-    }
-
     public function findByEmail(string $email, string $columns = '*'): ?User
     {
         $find = $this->find(
