@@ -4,8 +4,10 @@ namespace Source\App\Controllers;
 
 use Source\Core\Connect;
 use Source\Core\Controller;
+use Source\Models\Category;
 use Source\Models\Faq\Channel;
 use Source\Models\Faq\Question;
+use Source\Models\Post;
 use Source\Models\User;
 use Source\Support\Pager;
 use stdClass;
@@ -23,8 +25,12 @@ class Web extends Controller
 
     public function home(): void
     {
+
+        $posts = (new Post())->find()->order("post_at DESC")->limit(6)->fetch(true);
+
         echo $this->view->render("home", [
             "title" => "Home | CafeControl",
+            "posts" => $posts
         ]);
     }
 
@@ -48,21 +54,33 @@ class Web extends Controller
 
     public function blog(?array $data): void
     {
-        $pager = new Pager(url('/blog/page/'));
-        $pager->pager(100, 10, ($data['page'] ?? 1));
+        $posts = (new Post())->find();
+
+        $pager = new Pager(url('/blog/pagina/'));
+        $pager->pager($posts->count(), 9, ($data['page'] ?? 1));
 
         echo $this->view->render("blog", [
             "title" => "Blog | CafeControl",
-            "paginator" => $pager->render()
+            "paginator" => $pager->render(),
+            "posts" => $posts->limit($pager->limit())->offset($pager->offset())->fetch(true),
+            "search" => $data['search'] ?? "TESTE",
         ]);
     }
 
     public function blogPost(array $data): void
     {
-        $postName = $data["postName"];
+        $post = (new Post())->findByUri($data['uri'])->fetch();
+
+        if (!$post) {
+            redirect("error/404");
+        }
+
+        $posts = (new Post())->find()->order("rand()")->limit(3)->fetch(true);
 
         echo $this->view->render("blog-post", [
-            "title" => "{$postName} | CafeControl"
+            "title" => "{$post->getTitle()}| CafeControl",
+            "post" => $post,
+            "posts" => $posts
         ]);
     }
 

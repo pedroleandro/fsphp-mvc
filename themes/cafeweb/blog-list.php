@@ -1,11 +1,15 @@
 <article class="blog_article">
-    <a title="Post" href="<?= url("/blog/titulo-post"); ?>">
-        <img title="Blog" alt="Blog" src="<?= theme("/assets/images/home-featured.jpg"); ?>"/>
+    <a title="<?= $post->getTitle(); ?>" href="<?= url("/blog/{$post->geturi()}") ?>">
+        <img title="<?= $post->getTitle(); ?>" alt="<?= $post->getTitle(); ?>"
+             src="<?= url("/storage/{$post->getCover()}"); ?>"/>
     </a>
     <header>
-        <p class="meta">Blog &bull; Por Robson V. Leite &bull; 22/12/18 23h23</p>
-        <h2><a title="Post" href="<?= url("/blog/titulo-post"); ?>">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</a></h2>
-        <p><a title="Post" href="<?= url("/blog/titulo-post"); ?>">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad amet autem
-                cumque dolores eos, illo magni minus nam nulla pariatur, rem rerum tempora velit veritatis.</a></p>
+        <p class="meta"><?= $post->category()->getTitle(); ?> &bull;
+            Por <?= $post->author()->getFirstName() . " " . $post->author()->getLastName(); ?>
+            &bull; <?= $post->getPostAt(); ?></p>
+        <h2><a title="<?= $post->getTitle(); ?>"
+               href="<?= url("/blog/{$post->getUri()}"); ?>"><?= $post->getTitle(); ?></a></h2>
+        <p><a title="<?= $post->getTitle(); ?>"
+              href="<?= url("/blog/{$post->getUri()}"); ?>"><?= str_limit_chars($post->getSubTitle(), 100, "<b>...leia mais</b>") ?></a></p>
     </header>
 </article>

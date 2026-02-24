@@ -38,6 +38,12 @@ class Question extends Model
 
     }
 
+    public function channel(): ?Model
+    {
+        return (new Channel())
+            ->findById($this->channelId);
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,12 +52,6 @@ class Question extends Model
     public function setId(?int $id): void
     {
         $this->id = $id;
-    }
-
-    public function channel(): ?Model
-    {
-        return (new Channel())
-            ->findById($this->channelId);
     }
 
     public function getChannelId(): ?int

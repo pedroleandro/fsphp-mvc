@@ -5,7 +5,7 @@ namespace Source\Models;
 use DateTime;
 use Source\Core\Model;
 
-class Categorie extends Model
+class Category extends Model
 {
 
     private ?int $id = null;
@@ -38,6 +38,11 @@ class Categorie extends Model
     public function save()
     {
 
+    }
+
+    public function posts(): ?array
+    {
+        return (new Post())->find("category = :cid", "cid={$this->id}")->fetch(true);
     }
 
     public function getId(): ?int
