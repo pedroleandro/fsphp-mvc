@@ -11,6 +11,8 @@
                 <input type="text" name="s" placeholder="Encontre um artigo:"/>
                 <button class="icon-search icon-notext"></button>
             </label>
+
+            <div class="search_message"></div>
         </form>
     </header>
 

@@ -561,6 +561,15 @@ body {
     text-decoration: underline;
 }
 
+.search_message {
+    margin-top: 10px;
+}
+
+.form_error {
+    color: #ff3b3b;
+    font-size: 0.9rem;
+}
+
 /*video*/
 .home_video {
     position: relative;

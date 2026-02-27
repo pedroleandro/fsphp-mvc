@@ -17,7 +17,7 @@ define("CONFIG_DB_PORT", $_ENV['db_port']);
 /**
  * URLS
  */
-define("CONFIG_URL_BASE", "https://www.fsphpmvc.com.br");
+define("CONFIG_URL_BASE", "http://localhost/upinside/fsphp-mvc");
 define("CONFIG_URL_TEST", "http://localhost/upinside/fsphp-mvc");
 define("CONFIG_URL_ADMIN", CONFIG_URL_BASE . "/admin");
 define("CONFIG_URL_ERROR", CONFIG_URL_BASE . "/404");
@@ -44,11 +44,11 @@ define("CONFIG_PASSWORD_OPTIONS", ["cost" => 10]);
 /**
  * MESSAGES
  */
-define("CONFIG_MESSAGE_CLASS", "trigger");
-define("CONFIG_MESSAGE_INFO", "info");
-define("CONFIG_MESSAGE_SUCESS", "success");
-define("CONFIG_MESSAGE_WARNING", "warning");
-define("CONFIG_MESSAGE_ERROR", "error");
+define("CONFIG_MESSAGE_CLASS", "message");
+define("CONFIG_MESSAGE_INFO", "info icon-info");
+define("CONFIG_MESSAGE_SUCESS", "success icon-check-square-o");
+define("CONFIG_MESSAGE_WARNING", "warning icon-warning");
+define("CONFIG_MESSAGE_ERROR", "error icon-warning");
 
 
 /**

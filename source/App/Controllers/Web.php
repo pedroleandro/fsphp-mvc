@@ -54,16 +54,52 @@ class Web extends Controller
 
     public function blog(?array $data): void
     {
-        $posts = (new Post())->find();
+        $search = $data['search'] ?? null;
+        $page = $data['page'] ?? 1;
 
-        $pager = new Pager(url('/blog/pagina/'));
-        $pager->pager($posts->count(), 9, ($data['page'] ?? 1));
+        $page = filter_var($page, FILTER_VALIDATE_INT);
+        $page = ($page >= 1 ? $page : 1);
+
+        if ($search) {
+            $posts = (new Post())->find(
+                "title LIKE :s",
+                "s=%{$search}%"
+            );
+        } else {
+            $posts = (new Post())->find();
+        }
+
+        $pager = new Pager(url("/blog/{$search}/"));
+        $pager->pager($posts->count(), 9, $page);
 
         echo $this->view->render("blog", [
             "title" => "Blog | CafeControl",
             "paginator" => $pager->render(),
-            "posts" => $posts->limit($pager->limit())->offset($pager->offset())->fetch(true),
-            "search" => $data['search'] ?? "TESTE",
+            "posts" => $posts
+                ->limit($pager->limit())
+                ->offset($pager->offset())
+                ->fetch(true),
+            "search" => $search
+        ]);
+    }
+
+    public function blogSearch(?array $data): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $search = trim($data['s'] ?? '');
+
+        if (empty($search)) {
+            echo json_encode([
+                "message" => "<p class='form_error'>Digite algo para pesquisar.</p>"
+            ]);
+            return;
+        }
+
+        $search = str_slug($search);
+
+        echo json_encode([
+            "redirect" => url("/blog/{$search}/1")
         ]);
     }
 

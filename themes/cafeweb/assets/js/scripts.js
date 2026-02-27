@@ -78,21 +78,31 @@ $(function () {
                 load.fadeIn(200).css("display", "flex");
             },
             success: function (response) {
+
+                // console.log(url)
                 //redirect
                 if (response.redirect) {
                     window.location.href = response.redirect;
                 }
 
                 //message
+                // if (response.message) {
+                //     if (flash.length) {
+                //         flash.html(response.message).fadeIn(100).effect("bounce", 300);
+                //     } else {
+                //         form.prepend("<div class='" + flashClass + "'>" + response.message + "</div>")
+                //             .find("." + flashClass).effect("bounce", 300);
+                //     }
+                // } else {
+                //     flash.fadeOut(100);
+                // }
+
                 if (response.message) {
-                    if (flash.length) {
-                        flash.html(response.message).fadeIn(100).effect("bounce", 300);
-                    } else {
-                        form.prepend("<div class='" + flashClass + "'>" + response.message + "</div>")
-                            .find("." + flashClass).effect("bounce", 300);
-                    }
+                    form.find(".search_message")
+                        .html(response.message)
+                        .fadeIn(200);
                 } else {
-                    flash.fadeOut(100);
+                    form.find(".search_message").fadeOut(200).html("");
                 }
             },
             complete: function () {

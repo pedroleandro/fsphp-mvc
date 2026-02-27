@@ -18,9 +18,9 @@ $router->get('/termos', 'Web@terms');
 $router->group('/blog');
 $router->get('/', 'Web@blog');
 $router->get('/pagina/{page}', 'Web@blog');
+$router->get('/{search}/{page}', 'Web@blog');
 $router->get('/{uri}', 'Web@blogPost');
 $router->post('/buscar', 'Web@blogSearch');
-$router->post('/buscar{terms}/{page}', 'Web@blogSearch');
 
 $router->group(null);
 $router->get('/entrar', 'Web@login');
