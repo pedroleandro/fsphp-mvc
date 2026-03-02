@@ -12,6 +12,7 @@ class User extends Model
     private ?string $firstName = null;
     private ?string $lastName = null;
     private ?string $email = null;
+    private ?string $status = null;
     private ?string $password = null;
     private ?int $document = null;
     private string|DateTime|null $createdAt = null;
@@ -30,6 +31,7 @@ class User extends Model
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
+        $this->status = "registered";
         $this->password = $password;
         $this->document = $document;
         return $this;
@@ -42,6 +44,7 @@ class User extends Model
             "lastName" => $this->lastName,
             "email" => $this->email,
             "password" => $this->password,
+            "status" => $this->status,
             "document" => $this->document ?? null,
             "createdAt" => $this->createdAt ?? null,
             "updatedAt" => $this->updatedAt ?? null
@@ -65,7 +68,7 @@ class User extends Model
             return false;
         }
 
-        if(!is_email($this->email)){
+        if (!is_email($this->email)) {
             $this->message->warning("O e-mail informado não é válido!");
             return false;
         }
@@ -99,10 +102,10 @@ class User extends Model
 
             $this->data = (object)[
                 "first_name" => $this->firstName,
-                "last_name"  => $this->lastName,
-                "email"      => $this->email,
-                "password"   => $this->password,
-                "document"   => $this->document ?? null
+                "last_name" => $this->lastName,
+                "email" => $this->email,
+                "password" => $this->password,
+                "document" => $this->document ?? null
             ];
 
             $userId = $this->create((array)$this->data);
@@ -133,9 +136,9 @@ class User extends Model
 
             $this->data = (object)[
                 "first_name" => $this->firstName,
-                "last_name"  => $this->lastName,
-                "email"      => $this->email,
-                "document"   => $this->document ?? null
+                "last_name" => $this->lastName,
+                "email" => $this->email,
+                "document" => $this->document ?? null
             ];
 
             if (!empty($this->password)) {
@@ -164,6 +167,15 @@ class User extends Model
 
         return true;
 
+    }
+
+    public function confirm(): bool
+    {
+        return $this->update(
+            ["status" => "confirmed"],
+            "id = :id",
+            "id={$this->id}"
+        );
     }
 
     public function getId(): int
@@ -199,6 +211,16 @@ class User extends Model
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): void
+    {
+        $this->status = $status;
     }
 
     public function setEmail(string $email): void

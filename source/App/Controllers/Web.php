@@ -185,15 +185,34 @@ class Web extends Controller
 
     public function confirm()
     {
-        echo $this->view->render("optin-confirm", [
-            "title" => "Confirma | CafeControl"
+        echo $this->view->render("optin", [
+            "title" => "Confirma | CafeControl",
+            "data" => (object)[
+                "title" => "Falta pouco! Confirme seu cadastro.",
+                "description" => "Enviamos um link de confirmação para seu e-mail. Acesse e siga as instruções para concluir seu cadastro e comece a controlar com o CaféControl",
+                "image" => theme("/assets/images/optin-confirm.jpg")
+            ],
         ]);
     }
 
-    public function success()
+    public function success(array $data)
     {
-        echo $this->view->render("optin-success", [
-            "title" => "Obrigado | CafeControl"
+        $email = base64_decode($data['email']);
+        $user = (new User())->findByEmail($email);
+
+        if ($user && $user->getStatus() == "registered") {
+            $user->confirm();
+        }
+
+        echo $this->view->render("optin", [
+            "title" => "Obrigado | CafeControl",
+            "data" => (object)[
+                "title" => "Tudo pronto. Você já pode controlar :)",
+                "description" => "Bem-vindo(a) ao seu controle de contas, vamos tomar um café?",
+                "image" => theme("/assets/images/optin-success.jpg"),
+                "link" => url("/entrar"),
+                "linkTitle" => "Entrar"
+            ]
         ]);
     }
 
