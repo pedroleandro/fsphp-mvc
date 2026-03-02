@@ -4,6 +4,7 @@ namespace Source\App\Controllers;
 
 use Source\Core\Connect;
 use Source\Core\Controller;
+use Source\Models\Auth;
 use Source\Models\Category;
 use Source\Models\Faq\Channel;
 use Source\Models\Faq\Question;
@@ -134,11 +135,52 @@ class Web extends Controller
         ]);
     }
 
-    public function register()
+    public function register(?array $data): void
     {
+        if (!empty($data)) {
+            header('Content-Type: application/json; charset=utf-8');
+            $json = [];
+
+            if (!csrf_verify($data)) {
+                $json["message"] = message()
+                    ->error("Erro ao enviar dados. Use o formulário!")
+                    ->render();
+
+                echo json_encode($json);
+                return;
+            }
+
+            if (in_array("", $data)) {
+                $json["message"] = $this->message->info("Informe seus dados para criar sua conta!")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            $auth = new Auth();
+            $user = new User();
+
+            $user->bootstrap(
+                $data["first_name"],
+                $data["last_name"],
+                $data["email"],
+                $data["password"]
+            );
+
+            if ($auth->register($user)) {
+                $json["redirect"] = url("/confirma");
+
+            } else {
+                $json['message'] = $auth->getMessage()->render();
+            }
+
+            echo json_encode($json);
+            return;
+        }
+
         echo $this->view->render("auth-register", [
             "title" => "Cadastrar | CafeControl"
         ]);
+        return;
     }
 
     public function confirm()

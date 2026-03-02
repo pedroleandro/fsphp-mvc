@@ -63,7 +63,7 @@ $(function () {
     });
 
     //ajax form
-    $("form:not('.ajax_off')").submit(function (e) {
+    $("form:not(.ajax_off)").submit(function (e) {
         e.preventDefault();
         var form = $(this);
         var load = $(".ajax_load");
@@ -79,8 +79,8 @@ $(function () {
             },
             success: function (response) {
 
-                // console.log(url)
-                //redirect
+                console.log(response);
+
                 if (response.redirect) {
                     window.location.href = response.redirect;
                 }
@@ -104,6 +104,12 @@ $(function () {
                 } else {
                     form.find(".search_message").fadeOut(200).html("");
                 }
+            },
+            error: function (xhr, status, error) {
+                console.log("ERRO AJAX:");
+                console.log("Status:", status);
+                console.log("Error:", error);
+                console.log("Response:", xhr.responseText);
             },
             complete: function () {
                 load.fadeOut(200);

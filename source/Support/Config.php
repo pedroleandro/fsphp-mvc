@@ -22,6 +22,23 @@ define("CONFIG_URL_TEST", "http://localhost/upinside/fsphp-mvc");
 define("CONFIG_URL_ADMIN", CONFIG_URL_BASE . "/admin");
 define("CONFIG_URL_ERROR", CONFIG_URL_BASE . "/404");
 
+
+/**
+ * SITE
+ */
+define("CONF_SITE_NAME", "CaféControl");
+define("CONF_SITE_TITLE", "Gerencie suas contas com o melhor café");
+define("CONF_SITE_DESC", "O café control é um gerenciador de contas simples, poderoso e gratuito. O prazer de tomar um café e ");
+define("CONF_SITE_LANG", "pr_BR");
+define("CONF_SITE_DOMAIN", "fsphp.upinside.com.br");
+define("CONF_SITE_ADDR_STREET", "SC 406 - Rod. Dr Antonio Luiz Moura Gonzaga");
+define("CONF_SITE_ADDR_NUMBER", "3339");
+define("CONF_SITE_ADDR_COMPLEMENT", "Bloco A, Sala 208");
+define("CONF_SITE_ADDR_CITY", "Florianópolis");
+define("CONF_SITE_ADDR_STATE", "SC");
+define("CONF_SITE_ADDR_ZIPCODE", "88048-301");
+
+
 /**
  * DATES
  */

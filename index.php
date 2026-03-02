@@ -24,11 +24,12 @@ $router->post('/buscar', 'Web@blogSearch');
 
 $router->group(null);
 $router->get('/entrar', 'Web@login');
-$router->get('/recuperar', 'Web@forget');
 $router->get('/cadastrar', 'Web@register');
+$router->post('/cadastrar', 'Web@register');
+$router->get('/recuperar', 'Web@forget');
 
 $router->get('/confirma', 'Web@confirm');
-$router->get('/obrigado', 'Web@success');
+$router->get('/obrigado/{email}', 'Web@success');
 
 $router->namespace('Source\App\Controllers')->group('/error');
 $router->get('/{errorCode}', 'Web@error');

@@ -17,13 +17,10 @@ class Email
 
     public function __construct()
     {
-        $dotenv = Dotenv::createImmutable(__DIR__ . '/../..');
-        $dotenv->load();
-
         $this->mail = new PHPMailer(true);
         $this->message = new Message();
 
-        $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
+        $this->mail->SMTPDebug = SMTP::DEBUG_OFF;
         $this->mail->isSMTP();
         $this->mail->Host       = 'smtp.sendgrid.net';
         $this->mail->SMTPAuth   = true;
