@@ -4,6 +4,7 @@ namespace Source\Models;
 
 use Source\Core\Email;
 use Source\Core\Model;
+use Source\Core\Session;
 use Source\Core\View;
 
 class Auth extends Model
@@ -36,6 +37,46 @@ class Auth extends Model
         )->send();
 
         return true;
+    }
+
+    public function login(string $email, string $password, bool $save = false)
+    {
+        if(!is_email($email)){
+            $this->message->warning("O e-mail informado não é válido!");
+            return false;
+        }
+
+        if($save){
+            setcookie("authEmail", $email, time() + 604800, "/");
+        }else{
+            setcookie("authEmail", null, time() - 3600, "/");
+        }
+
+        if(!is_password($password)){
+            $this->message->warning("A senha informada não é válida!");
+            return false;
+        }
+
+        $user = (new User())->findByEmail($email);
+        if(!$user){
+            $this->message->error("Credenciais inválidas!");
+            return false;
+        }
+
+        if(!password_verify($password, $user->getPassword())){
+            $this->message->error("Credenciais inválidas!");
+            return false;
+        }
+
+        if(password_rehash($user->getPassword())){
+            $user->setPassword($password);
+            $user->save();
+        }
+
+        (new Session())->set("authUser", $user->getId());
+        $this->message->success("Login efetuado com sucesso!")->flash();
+        return true;
+
     }
 
     protected function data()

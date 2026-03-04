@@ -24,6 +24,7 @@ $router->post('/buscar', 'Web@blogSearch');
 
 $router->group(null);
 $router->get('/entrar', 'Web@login');
+$router->post('/entrar', 'Web@login');
 $router->get('/cadastrar', 'Web@register');
 $router->post('/cadastrar', 'Web@register');
 $router->get('/recuperar', 'Web@forget');
