@@ -14,6 +14,7 @@ class User extends Model
     private ?string $email = null;
     private ?string $status = null;
     private ?string $password = null;
+    private ?string $forget = null;
     private ?int $document = null;
     private string|DateTime|null $createdAt = null;
     private string|DateTime|null $updatedAt = null;
@@ -33,6 +34,7 @@ class User extends Model
         $this->email = $email;
         $this->status = "registered";
         $this->password = $password;
+        $this->forget = null;
         $this->document = $document;
         return $this;
     }
@@ -44,6 +46,7 @@ class User extends Model
             "lastName" => $this->lastName,
             "email" => $this->email,
             "password" => $this->password,
+            "forget" => $this->forget,
             "status" => $this->status,
             "document" => $this->document ?? null,
             "createdAt" => $this->createdAt ?? null,
@@ -76,7 +79,7 @@ class User extends Model
         /**
          * User Create
          */
-        if (empty($this->id)) {
+        if (empty($this->getId())) {
 
             if (empty($this->password)) {
                 $this->message->warning("A senha é obrigatória.");
@@ -141,8 +144,8 @@ class User extends Model
                 "document" => $this->document ?? null
             ];
 
-            if (!empty($this->password)) {
-                if (!is_password($this->password)) {
+            if (empty($this->getPassword())) {
+                if (!is_password($this->getPassword())) {
                     $this->message->warning("Senha inválida.");
                     return false;
                 }
@@ -236,6 +239,16 @@ class User extends Model
     public function setPassword(?string $password): void
     {
         $this->password = $password;
+    }
+
+    public function getForget(): ?string
+    {
+        return $this->forget;
+    }
+
+    public function setForget(?string $forget): void
+    {
+        $this->forget = $forget;
     }
 
     public function getDocument(): ?int

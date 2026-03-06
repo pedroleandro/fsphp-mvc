@@ -26,7 +26,11 @@ $router->get('/entrar', 'Web@login');
 $router->post('/entrar', 'Web@login');
 $router->get('/cadastrar', 'Web@register');
 $router->post('/cadastrar', 'Web@register');
+
 $router->get('/recuperar', 'Web@forget');
+$router->post('/recuperar', 'Web@forget');
+$router->get('/recuperar/{code}', 'Web@forgetReset');
+$router->post('/recuperar/resetar', 'Web@forgetReser');
 
 $router->get('/confirma', 'Web@confirm');
 $router->get('/obrigado/{email}', 'Web@success');

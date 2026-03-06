@@ -9,7 +9,13 @@
             <p>Informe seu e-mail para receber um link de recuperação.</p>
         </header>
 
-        <form class="auth_form" action="" method="post" enctype="multipart/form-data">
+        <form class="auth_form" action="<?= url('/recuperar'); ?>" method="post" enctype="multipart/form-data">
+
+            <div class="search_message">
+                <?= (new \Source\Core\Session())->flash(); ?>
+            </div>
+
+            <?= csrf_input(); ?>
             <label>
                 <div class="unlock-alt">
                     <span class="icon-envelope">Email:</span>

@@ -136,7 +136,7 @@ class Web extends Controller
                 return;
             }
 
-            if(empty($data['email'] || $data['password'])){
+            if (empty($data['email'] || $data['password'])) {
                 $json["message"] = $this->message
                     ->warning("Informe seu e-mail e senha para entrar!")
                     ->render();
@@ -147,9 +147,9 @@ class Web extends Controller
             $auth = new Auth();
             $login = $auth->login($data['email'], $data['password'], $save);
 
-            if($login){
+            if ($login) {
                 $json['redirect'] = url('/app');
-            }else{
+            } else {
                 $json["message"] = $auth->getMessage()->render();
             }
 
@@ -164,8 +164,40 @@ class Web extends Controller
         ]);
     }
 
-    public function forget()
+    public function forget(?array $data): void
     {
+
+        if (!empty($data)) {
+            header('Content-Type: application/json; charset=utf-8');
+            $json = [];
+
+            if (!csrf_verify($data)) {
+                $json["message"] = $this->message
+                    ->error("Erro ao enviar dados. Use o formulário!")
+                    ->render();
+
+                echo json_encode($json);
+                return;
+            }
+
+            if(empty($data['email'])) {
+                $json["message"] = $this->message
+                    ->info("Informe seu email para continuar!")
+                    ->render();
+                return;
+            }
+
+            $auth = new Auth();
+            if($auth->forget($data['email'])) {
+                $json["message"] = $this->message->success("Acesse seu email para recuperar sua senha!")->render();
+            }else{
+                $json["message"] = $auth->getMessage()->render();
+            }
+
+            echo json_encode($json);
+            return;
+        }
+
         echo $this->view->render("auth-forget", [
             "title" => "Recuperar | CafeControl"
         ]);
