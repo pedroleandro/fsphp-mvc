@@ -15,6 +15,23 @@ class Auth extends Model
         parent::__construct("users", ["id"], ["email", "password"]);
     }
 
+    public static function user(): ?User
+    {
+        $session = new Session();
+
+        if (!$session->has("authUser")) {
+            return null;
+        }
+
+        return (new User())->findById($session->authUser);
+    }
+
+    public static function logout(): void
+    {
+        $session = new Session();
+        $session->unset("authUser");
+    }
+
     public function register(User $user): bool
     {
         if (!$user->save()) {
@@ -41,34 +58,34 @@ class Auth extends Model
 
     public function login(string $email, string $password, bool $save = false)
     {
-        if(!is_email($email)){
+        if (!is_email($email)) {
             $this->message->warning("O e-mail informado não é válido!");
             return false;
         }
 
-        if($save){
+        if ($save) {
             setcookie("authEmail", $email, time() + 604800, "/");
-        }else{
+        } else {
             setcookie("authEmail", null, time() - 3600, "/");
         }
 
-        if(!is_password($password)){
+        if (!is_password($password)) {
             $this->message->warning("A senha informada não é válida!");
             return false;
         }
 
         $user = (new User())->findByEmail($email);
-        if(!$user){
+        if (!$user) {
             $this->message->error("Credenciais inválidas!");
             return false;
         }
 
-        if(!password_verify($password, $user->getPassword())){
+        if (!password_verify($password, $user->getPassword())) {
             $this->message->error("Credenciais inválidas!");
             return false;
         }
 
-        if(password_rehash($user->getPassword())){
+        if (password_rehash($user->getPassword())) {
             $user->setPassword($password);
             $user->save();
         }

@@ -13,7 +13,6 @@ $router = new Router(url(), "@");
 $router->namespace('Source\App\Controllers');
 $router->get('/', 'Web@home');
 $router->get('/sobre', 'Web@about');
-$router->get('/termos', 'Web@terms');
 
 $router->group('/blog');
 $router->get('/', 'Web@blog');
@@ -32,12 +31,18 @@ $router->get('/recuperar', 'Web@forget');
 $router->get('/confirma', 'Web@confirm');
 $router->get('/obrigado/{email}', 'Web@success');
 
+$router->get('/termos', 'Web@terms');
+
+$router->group("/app");
+$router->get("/", "AppController@home");
+$router->get("/sair", "AppController@logout");
+
 $router->namespace('Source\App\Controllers')->group('/error');
 $router->get('/{errorCode}', 'Web@error');
 
 $router->dispatch();
 
-if($router->error()){
+if ($router->error()) {
     redirect("/error/{$router->error()}");
 }
 
