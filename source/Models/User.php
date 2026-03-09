@@ -125,7 +125,7 @@ class User extends Model
          * User Update
          */
         if (!empty($this->id)) {
-            $userId = $this->id;
+            $userId = $this->getId();
 
             $email = $this->read(
                 "SELECT id FROM " . self::$entity . " WHERE email = :email AND id != :id",
@@ -141,7 +141,8 @@ class User extends Model
                 "first_name" => $this->firstName,
                 "last_name" => $this->lastName,
                 "email" => $this->email,
-                "document" => $this->document ?? null
+                "document" => $this->document ?? null,
+                "forget" => $this->forget,
             ];
 
             if (empty($this->getPassword())) {

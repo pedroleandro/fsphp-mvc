@@ -180,7 +180,7 @@ class Web extends Controller
                 return;
             }
 
-            if(empty($data['email'])) {
+            if (empty($data['email'])) {
                 $json["message"] = $this->message
                     ->info("Informe seu email para continuar!")
                     ->render();
@@ -188,9 +188,9 @@ class Web extends Controller
             }
 
             $auth = new Auth();
-            if($auth->forget($data['email'])) {
+            if ($auth->forget($data['email'])) {
                 $json["message"] = $this->message->success("Acesse seu email para recuperar sua senha!")->render();
-            }else{
+            } else {
                 $json["message"] = $auth->getMessage()->render();
             }
 
@@ -201,6 +201,53 @@ class Web extends Controller
         echo $this->view->render("auth-forget", [
             "title" => "Recuperar | CafeControl"
         ]);
+    }
+
+    public function reset(array $data): void
+    {
+        echo $this->view->render("auth-reset", [
+            "title" => "Resetar | CafeControl",
+            "code" => $data['code']
+        ]);
+    }
+
+    public function resetPassword(?array $data): void
+    {
+        if (!empty($data)) {
+            header('Content-Type: application/json; charset=utf-8');
+            $json = [];
+
+            if (!csrf_verify($data)) {
+                $json["message"] = message()
+                    ->error("Erro ao enviar dados. Use o formulário!")
+                    ->render();
+
+                echo json_encode($json);
+                return;
+            }
+
+            if (empty($data['password'] || empty($data['password-confirm']))) {
+                $json["message"] = message()
+                    ->warning("Informe as senhas para continuar!")
+                    ->render();
+
+                echo json_encode($json);
+                return;
+            }
+
+            list($email, $code) = explode("|", $data['code']);
+            $auth = new Auth();
+
+            if($auth->reset($email, $code, $data['password'], $data['password-confirm'])) {
+                $this->message->success("Senha alterada com sucesso!")->flash();
+                $json['redirect'] = url('/entrar');
+            }else{
+                $json["message"] = $auth->getMessage()->render();
+            }
+
+            echo json_encode($json);
+            return;
+        }
     }
 
     public function register(?array $data): void

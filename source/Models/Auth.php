@@ -111,7 +111,7 @@ class Auth extends Model
         $view = new View(__DIR__ . "/../../assets/views/email");
         $message = $view->render("forget", [
             "first_name" => $user->getFirstName(),
-            "forget_link" => $user->getForget()
+            "forget_link" => url('/recuperar/' . $user->getEmail() . "|" . $user->getForget())
         ]);
 
         (new Email())->bootstrap(
@@ -121,6 +121,36 @@ class Auth extends Model
             "{$user->getFirstName()} {$user->getLastName()}",
         )->send();
 
+        return true;
+    }
+
+    public function reset(string $email, string $code, string $password, string $passwordConfirm): bool
+    {
+        $user = (new User())->findByEmail($email);
+
+        if(!$user){
+            $this->message->warning("A conta para recuperação não foi encontrada!");
+            return false;
+        }
+
+        if($user->getForget() != $code){
+            $this->message->error("Código de recuperação inválido!");
+            return false;
+        }
+
+        if(!is_password($password)) {
+            $this->message->warning("A senha informada não é válida!");
+            return false;
+        }
+
+        if($password != $passwordConfirm){
+            $this->message->warning("As senhas não conferem!");
+            return false;
+        }
+
+        $user->setPassword($password);
+        $user->setForget(null);
+        $user->save();
         return true;
     }
 

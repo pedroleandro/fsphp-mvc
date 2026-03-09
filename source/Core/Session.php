@@ -12,6 +12,11 @@ class Session
         }
     }
 
+    public function __set(string $name, $value): void
+    {
+        $_SESSION[$name] = $value;
+    }
+
     public function __get(string $name)
     {
         if (empty($_SESSION[$name])) {
