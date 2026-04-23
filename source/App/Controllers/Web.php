@@ -63,8 +63,8 @@ class Web extends Controller
 
         if ($search) {
             $posts = (new Post())->find(
-                "title LIKE :s",
-                "s=%{$search}%"
+                "MATCH(title, subtitle) AGAINST(:s)",
+                "s={$search}"
             );
         } else {
             $posts = (new Post())->find();

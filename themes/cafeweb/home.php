@@ -82,6 +82,13 @@
                 <span class="icon icon-check-square-o icon-notext"></span>
                 <h4>Crie sua conta gratuitamente:</h4>
                 <form action="<?= url("/cadastrar"); ?>" method="post" enctype="multipart/form-data">
+
+                    <div class="search_message">
+                        <?= (new \Source\Core\Session())->flash(); ?>
+                    </div>
+
+                    <?= csrf_input(); ?>
+
                     <input type="text" name="first_name" placeholder="Primeiro nome:"/>
                     <input type="text" name="last_name" placeholder="Último nome:"/>
                     <input type="email" name="email" placeholder="Melhor e-mail:"/>
